@@ -1,0 +1,131 @@
+﻿@model IEnumerable<WebApplication2.Models.Task>
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: url('https://websitedemos.net/wordpress-agency-04/wp-content/uploads/sites/98/2019/11/hero-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            padding-top: 70px;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+            z-index: 2;
+            position: fixed;
+            width: 100%;
+            top: 0;
+        }
+
+        .elementor-section.elementor-top-section {
+            position: relative;
+            z-index: 1;
+            margin-top: 60px;
+        }
+
+        .page-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            position: relative;
+            top: 50px; /* Adjusted top position */
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px; /* Added margin to separate table from content above */
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background-color: #333;
+            color: white;
+        }
+
+        .btn {
+            padding: 5px 10px;
+            text-decoration: none;
+            color: white;
+            background-color: #007bff;
+            border-radius: 3px;
+            border: 1px solid #007bff;
+        }
+
+            .btn:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+        .btn-group {
+            display: flex; /* Utilisation de flexbox */
+            justify-content: space-around; /* Répartition des boutons sur la ligne */
+        }
+
+            .btn-group a {
+                flex-grow: 1; /* Les boutons s'étendent pour remplir l'espace disponible */
+                margin-right: 5px;
+            }
+    </style>
+</head>
+<body>
+
+    <div class="elementor-section elementor-top-section">
+        <div class="elementor-container page-container">
+            <p>
+                <a href="@Url.Action("Create")" class="btn">Create New</a>
+            </p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Project</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Code)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.EndDate)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Project.Description)</td>
+                            <td>
+                                <div class="btn-group">
+                                    <a href="@Url.Action("Edit", new { id = item.ID })" class="btn">Edit</a>
+                                    <a href="@Url.Action("Details", new { id = item.ID })" class="btn">Details</a>
+                                    <a href="@Url.Action("Delete", new { id = item.ID })" class="btn">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+</html>

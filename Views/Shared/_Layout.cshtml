@@ -1,0 +1,78 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Mon application ASP.NET</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            background: url('https://websitedemos.net/wordpress-agency-04/wp-content/uploads/sites/98/2019/11/hero-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            opacity: 1;
+            z-index: -1;
+            height: 100vh;
+        }
+
+        .navbar {
+            overflow: hidden;
+            background-color: #333;
+            z-index: 2;
+            position: fixed;
+            width: 100%;
+            top: 0;
+        }
+
+   
+        .nav-link {
+            color: #fff;
+            margin-right: 10px;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-dark bg-dark">
+        <div class="container">
+            @Html.ActionLink("Nom d'application", "Index", "Home", new { area = "" }, new { @class = "navbar-brand" })
+            <button type="button" class="navbar-toggler" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" title="Activer/désactiver la navigation" aria-controls="navbarSupportedContent"
+                    aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
+                <ul class="navbar-nav flex-grow-1">
+                    <li>@Html.ActionLink("Accueil", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Projets", "Index", "Projects", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Taches", "Index", "Tasks", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Membres", "Index", "Members", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.Partial("_LoginPartial")</li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        @RenderBody()
+       
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>
