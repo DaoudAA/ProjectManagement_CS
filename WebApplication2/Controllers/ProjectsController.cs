@@ -20,20 +20,27 @@ namespace WebApplication2.Controllers
             return View(db.Project.ToList());
         }
 
-        // GET: Projects/Details/5
         public ActionResult Details(int? id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Project project = db.Project.Find(id);
+
+            // Retrieve the project and its related tasks
+            var project = db.Project.Include(p => p.Tasks).SingleOrDefault(p => p.ID == id);
+
             if (project == null)
             {
                 return HttpNotFound();
             }
+
+            // Pass the tasks to the view using ViewBag
+            ViewBag.Tasks = project.Tasks.ToList();
+
             return View(project);
         }
+
 
         // GET: Projects/Create
         public ActionResult Create()
