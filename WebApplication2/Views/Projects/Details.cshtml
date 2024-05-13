@@ -24,16 +24,46 @@
                             <table class="table table-striped table-bordered">
                                 <thead>
                                     <tr>
+                                        <th>Code</th>
                                         <th>Description</th>
-                                        <!-- Add other task properties here -->
+                                        <th>Start date</th>
+                                        <th>End date</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var task in ViewBag.Tasks)
+                                    @foreach (var task in Model.Tasks)
                                     {
                                         <tr>
+                                            <td>@task.Code</td>
                                             <td>@task.Description</td>
-                                            <!-- Display other task properties here -->
+                                            <td>@task.StartDate</td>
+                                            <td>@task.EndDate</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>Members</h4>
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var member in Model.Members)
+                                    {
+                                        <tr>
+                                            <td>@member.UserID</td>
+                                            <td>@member.Name</td>
+                                            <td>
+                                                @Html.ActionLink("Remove member", "removeMember", new { projectId=@Model.ID, id = member.UserID })
+                                            </td>
                                         </tr>
                                     }
                                 </tbody>
