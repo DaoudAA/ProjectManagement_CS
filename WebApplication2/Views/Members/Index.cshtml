@@ -15,7 +15,7 @@
         </th>
     </tr>
 
-@foreach (var item in Model) {
+        @foreach (var item in Model) {
     <tr>
         <td>
             @Html.DisplayFor(modelItem => item.UserID)
@@ -23,10 +23,20 @@
         <td>
             @Html.DisplayFor(modelItem => item.Name)
         </td>
+        @if (User.Identity.Name!=item.Name)
+                {
+
         <td>
             @Html.ActionLink("Add to project", "AddMember", new { id = item.UserID })
 
         </td>
+                }
+        else
+                {
+                <td style="font-weight: bold;color:green;">
+                    You
+                </td>
+                }
     </tr>
 }
 

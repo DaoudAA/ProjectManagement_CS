@@ -31,7 +31,14 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    @foreach (var task in Model.Tasks)
+                                    @if (Model.Tasks.Count==0)
+                                    {
+                                        <p>The project doesn't contain any tasks yet</p>
+                                    }
+                                    else
+                                    {
+
+                                    foreach (var task in Model.Tasks)
                                     {
                                         <tr>
                                             <td>@task.Code</td>
@@ -39,6 +46,7 @@
                                             <td>@task.StartDate</td>
                                             <td>@task.EndDate</td>
                                         </tr>
+                                    }
                                     }
                                 </tbody>
                             </table>
@@ -59,11 +67,24 @@
                                     @foreach (var member in Model.Members)
                                     {
                                         <tr>
-                                            <td>@member.UserID</td>
-                                            <td>@member.Name</td>
-                                            <td>
-                                                @Html.ActionLink("Remove member", "removeMember", new { projectId=@Model.ID, id = member.UserID })
-                                            </td>
+                                            @if (Model.Manager.UserID == member.UserID)
+
+                                            {
+                                                <td>@member.UserID</td>
+                                                <td>@member.Name</td>
+                                                <td style="font-weight:bold; color: red;">Project manager</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@member.UserID</td>
+                                                <td>@member.Name</td>
+                                                if(Model.Manager.Name == User.Identity.Name)
+                                                {                                               
+                                                <td>
+                                                @Html.ActionLink("Remove member", "removeMember", new { projectId = @Model.ID, id = member.UserID })
+                                                </td>
+                                                }
+                                            }
                                         </tr>
                                     }
                                 </tbody>

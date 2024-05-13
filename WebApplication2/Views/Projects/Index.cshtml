@@ -2,6 +2,8 @@
 
 @{
     ViewBag.Title = "Index";
+    var currentUserName = User.Identity.Name;
+
 }
 
 <h2>Index</h2>
@@ -36,12 +38,25 @@
             <td>
                 @Html.DisplayFor(modelItem => item.StartDate)
             </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                @Html.ActionLink("Delete", "Delete", new { id = item.ID }) 
 
-            </td>
+            @if (item.Manager != null && item.Manager.Name == currentUserName)
+            {
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
+                </td>
+            }
+            else
+            {
+                <td>
+
+                    @Html.ActionLink("Details", "Details", new { id = item.ID })
+                </td>
+
+            }
+
+
         </tr>
     }
 
