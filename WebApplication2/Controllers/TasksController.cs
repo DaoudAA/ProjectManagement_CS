@@ -6,7 +6,11 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 using WebApplication2.Models;
+
 
 namespace WebApplication2.Controllers
 {
@@ -17,7 +21,9 @@ namespace WebApplication2.Controllers
         // GET: Tasks
         public ActionResult Index()
         {
-            return View(db.Task.ToList());
+            string userId = User.Identity.GetUserId();
+
+            return View(db.Task.Where(t => t.Project.Members.Any(m => m.UserID == userId)).ToList());
         }
 
         // GET: Tasks/Details/5
@@ -38,7 +44,8 @@ namespace WebApplication2.Controllers
         // GET: Tasks/Create
         public ActionResult Create()
         {
-            var projects = db.Project.Select(p => new { p.ID, DisplayText = p.Code + " : " + p.Description }).ToList();
+            string userId = User.Identity.GetUserId();
+            var projects = db.Project.Select(p => new { p.ID,p.Members, DisplayText = p.Code + " : " + p.Description }).Where(p => p.Members.Any(m => m.UserID == userId)).ToList();
             ViewBag.ProjectId = new SelectList(projects, "ID", "DisplayText");
             return View();
         }
@@ -56,6 +63,8 @@ namespace WebApplication2.Controllers
                 var project = db.Project.Find(task.Project.ID);
                 if (project != null)
                 {
+                    string userId = User.Identity.GetUserId();
+                    task.UserId = userId;
                     task.Project = project;
                     db.Task.Add(task);
                     db.SaveChanges();
@@ -67,8 +76,7 @@ namespace WebApplication2.Controllers
                 }
             }
 
-            var projects = db.Project.Select(p => new { p.ID, DisplayText = p.Code + " : " + p.Description }).ToList();
-            ViewBag.ProjectId = new SelectList(projects, "ID", "DisplayText");
+           
             return View(task);
         }
 
@@ -101,6 +109,8 @@ namespace WebApplication2.Controllers
                 var project = db.Project.Find(task.Project.ID);
                 if (project != null)
                 {
+                    string userId = User.Identity.GetUserId();
+                    task.UserId = userId;
                     task.Project = project;
                     db.Entry(task).State = EntityState.Modified;
                     db.SaveChanges();

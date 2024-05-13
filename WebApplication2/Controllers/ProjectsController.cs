@@ -4,8 +4,13 @@ using System.Data;
 using System.Data.Entity;
 using System.Linq;
 using System.Net;
+using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Ajax.Utilities;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.Owin;
+using Microsoft.Owin.Security;
 using WebApplication2.Models;
 
 namespace WebApplication2.Controllers
@@ -13,11 +18,17 @@ namespace WebApplication2.Controllers
     public class ProjectsController : Controller
     {
         private CsharpCBContext db = new CsharpCBContext();
+        private readonly UserManager<ApplicationUser> _userManager;
 
         // GET: Projects
-        public ActionResult Index()
+        public ActionResult  Index()
         {
-            return View(db.Project.ToList());
+            string userId = User.Identity.GetUserId();
+            var projects = db.Project
+                             .Where(p => p.Members.Any(m => m.UserID == userId))
+                             .ToList();
+
+            return View(projects);
         }
 
         // GET: Projects/Details/5
@@ -49,7 +60,13 @@ namespace WebApplication2.Controllers
         public ActionResult Create([Bind(Include = "ID,Code,Description,StartDate")] Project project)
         {
             if (ModelState.IsValid)
-            {
+            {   
+
+                string userId = User.Identity.GetUserId();
+                Models.Member m = db.Member.Where(mem=>mem.UserID == userId).First();
+                project.Members.Add(m);
+               
+                project.Manager = m;
                 db.Project.Add(project);
                 db.SaveChanges();
                 return RedirectToAction("Index");
@@ -81,8 +98,11 @@ namespace WebApplication2.Controllers
         public ActionResult Edit([Bind(Include = "ID,Code,Description,StartDate")] Project project)
         {
             if (ModelState.IsValid)
-            {
+            {   
                 db.Entry(project).State = EntityState.Modified;
+                string userId = User.Identity.GetUserId();
+                Models.Member m = db.Member.Where(mem => mem.UserID == userId).First();
+                project.Members.Add(m);
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
@@ -114,6 +134,7 @@ namespace WebApplication2.Controllers
             db.SaveChanges();
             return RedirectToAction("Index");
         }
+       
 
         protected override void Dispose(bool disposing)
         {

@@ -1,0 +1,49 @@
+@model WebApplication2.Models.MemberProjectModel
+
+@{
+    ViewBag.Title = "AddMember";
+}
+
+<h2>Add member to project</h2>
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        <h4>Task</h4>
+        <hr />
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        @Html.HiddenFor(model => model.MemberId)
+
+        <script>
+            // JavaScript function to log the MemberId field's value
+            document.addEventListener('DOMContentLoaded', function() {
+                var memberIdValue = '@Model.MemberId'; // Get the value of MemberId from the model
+                console.log('MemberId Value:', memberIdValue);
+            });
+        </script>
+
+        <div class="form-group">
+            @Html.LabelFor(model => model.ProjectId, "Project Code", htmlAttributes: new { @class = "control-label col-md-2" })
+            <div class="col-md-10">
+                @Html.DropDownListFor(model => model.ProjectId, ViewBag.ProjectId as SelectList, "- Select Project -", htmlAttributes: new { @class = "form-control" })
+                @Html.ValidationMessageFor(model => model.ProjectId, "", new { @class = "text-danger" })
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-md-10">
+                <input type="submit" value="Save" class="btn btn-default" />
+            </div>
+        </div>
+    </div>
+}
+
+<div>
+    @Html.ActionLink("Back to List", "Index")
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+}

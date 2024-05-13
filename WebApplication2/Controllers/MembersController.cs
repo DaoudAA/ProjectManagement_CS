@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AspNet.Identity;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
@@ -14,105 +15,66 @@ namespace WebApplication2.Controllers
     {
         private CsharpCBContext db = new CsharpCBContext();
 
-        // GET: Members
         public ActionResult Index()
         {
             return View(db.Member.ToList());
         }
 
-        // GET: Members/Details/5
-        public ActionResult Details(int? id)
+
+        //GET
+        public ActionResult AddMember(string id)
         {
             if (id == null)
             {
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
-            Member member = db.Member.Find(id);
-            if (member == null)
+            MemberProjectModel model = new MemberProjectModel(id);
+            if (model == null)
             {
                 return HttpNotFound();
             }
-            return View(member);
+            string userId = User.Identity.GetUserId();
+
+            var projects = db.Project.Select(p => new { p.ID,p.Manager, DisplayText = p.Code + " : " + p.Description }).Where(p => p.Manager.UserID == userId).ToList();
+            ViewBag.ProjectId = new SelectList(projects, "ID", "DisplayText");
+
+            return View(model);
         }
 
-        // GET: Members/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Members/Create
-        // Afin de déjouer les attaques par survalidation, activez les propriétés spécifiques auxquelles vous voulez établir une liaison. Pour 
-        // plus de détails, consultez https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+        //POST
+        [HttpPost, ActionName("AddMember")]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,Code,Name,LastName")] Member member)
+        public ActionResult AddMember([Bind(Include = "ProjectId,MemberId")] MemberProjectModel model)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                db.Member.Add(member);
-                db.SaveChanges();
-                return RedirectToAction("Index");
+                return View(model);
             }
 
-            return View(member);
-        }
+            // Retrieve the project by projectId
+            var project = db.Project.Find(model.ProjectId);
 
-        // GET: Members/Edit/5
-        public ActionResult Edit(int? id)
-        {
-            if (id == null)
+            if (project == null)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+                return HttpNotFound(); // Handle project not found
             }
-            Member member = db.Member.Find(id);
+
+            Member member = db.Member.Where(m => m.UserID == model.MemberId).First();
+            // Check if member exists (replace 'viewModel.MemberId' with the appropriate property)
+
             if (member == null)
             {
-                return HttpNotFound();
+                ModelState.AddModelError("", "Member not found.");
+                return View(model);
             }
-            return View(member);
-        }
 
-        // POST: Members/Edit/5
-        // Afin de déjouer les attaques par survalidation, activez les propriétés spécifiques auxquelles vous voulez établir une liaison. Pour 
-        // plus de détails, consultez https://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,Code,Name,LastName")] Member member)
-        {
-            if (ModelState.IsValid)
-            {
-                db.Entry(member).State = EntityState.Modified;
-                db.SaveChanges();
-                return RedirectToAction("Index");
-            }
-            return View(member);
-        }
+            // Add member to the project's Members collection
+            project.Members.Add(member);
 
-        // GET: Members/Delete/5
-        public ActionResult Delete(int? id)
-        {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Member member = db.Member.Find(id);
-            if (member == null)
-            {
-                return HttpNotFound();
-            }
-            return View(member);
-        }
-
-        // POST: Members/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public ActionResult DeleteConfirmed(int id)
-        {
-            Member member = db.Member.Find(id);
-            db.Member.Remove(member);
+            // Save changes to the database
             db.SaveChanges();
-            return RedirectToAction("Index");
+
+            return RedirectToAction("Index"); // Redirect to project index or details page
         }
 
         protected override void Dispose(bool disposing)

@@ -15,6 +15,7 @@ namespace WebApplication2.Controllers
     [Authorize]
     public class AccountController : Controller
     {
+        private CsharpCBContext db = new CsharpCBContext();
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
@@ -155,6 +156,9 @@ namespace WebApplication2.Controllers
                 var result = await UserManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
+                    Member member = new Member(user.Id,user.UserName);
+                    db.Member.Add(member);
+                    db.SaveChanges();
                     await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
                     
                     // Pour plus d'informations sur l'activation de la confirmation de compte et de la réinitialisation de mot de passe, visitez https://go.microsoft.com/fwlink/?LinkID=320771
