@@ -3,7 +3,6 @@
 @{
     ViewBag.Title = "Index";
     var currentUserName = User.Identity.Name;
-
 }
 
 <div class="container">
@@ -15,52 +14,38 @@
                 @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
             </p>
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().Code)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().StartDate)
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-
-            @if (item.Manager != null && item.Manager.Name == currentUserName)
-            {
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-                </td>
-            }
-            else
-            {
-                <td>
-
-                    @Html.ActionLink("Details", "Details", new { id = item.ID })
-                </td>
-
-            }
-
-
-        </tr>
-    }
-
-</table>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Code)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().Description)</th>
+                        <th>@Html.DisplayNameFor(model => model.FirstOrDefault().StartDate)</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Code)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+                            <td>
+                                @if (item.Manager != null && item.Manager.Name == currentUserName)
+                                {
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "btn btn-warning btn-sm" })
+                                    @Html.ActionLink("Details", "Details", new { id = item.ID }, new { @class = "btn btn-info btn-sm" })
+                                    @Html.ActionLink("Project is Completed!", "Delete", new { id = item.ID }, new { @class = "btn btn-danger btn-sm" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Details", "Details", new { id = item.ID }, new { @class = "btn btn-info btn-sm" })
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
