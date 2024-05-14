@@ -85,7 +85,57 @@
                             }
                         </div>
                     </div>
+                    <hr />
+                    <div class="row">
+                        <div class="col-md-12">
+                            <h4>Members</h4>
+                            <table class="table table-striped table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>User ID</th>
+                                        <th>Name</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var member in Model.Members)
+                                    {
+                                        <tr>
+                                            @if (Model.Manager.UserID == member.UserID)
+
+                                            {
+                                                <td>@member.UserID</td>
+                                                <td>@member.Name</td>
+                                                <td style="font-weight:bold; color: red;">Project manager</td>
+                                            }
+                                            else
+                                            {
+                                                <td>@member.UserID</td>
+                                                <td>@member.Name</td>
+                                                if (Model.Manager.Name == User.Identity.Name)
+                                                {
+                                                    <td>
+                                                        @Html.ActionLink("Remove member", "removeMember", new { projectId = @Model.ID, id = member.UserID })
+                                                    </td>
+                                                }
+                                            }
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
+                <div class="panel-footer">
+                    <div class="row">
+                        <div class="col-md-6">
+                            @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
+                        </div>
+                        <div class="col-md-6 text-right">
+                            @Html.ActionLink("Back to List", "Index", new { @class = "btn btn-default" })
+                        </div>
+                    </div>
+                </div>
+            </div>
             </div>
         </div>
     </div>
