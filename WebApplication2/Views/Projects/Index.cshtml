@@ -2,7 +2,6 @@
 
 @{
     ViewBag.Title = "Index";
-    var currentUserName = User.Identity.Name;
 
 }
 
@@ -38,25 +37,26 @@
             <td>
                 @Html.DisplayFor(modelItem => item.StartDate)
             </td>
-
-            @if (item.Manager != null && item.Manager.Name == currentUserName)
-            {
+            @{var currentUserId = ViewBag.UserId;
+            <td>@(item.Manager != null ? item.Manager.Name : "No Manager")</td> <!-- Display manager's name or indicate no manager -->
+            if (item.Manager != null && item.Manager.UserID == currentUserId)
+                {
                 <td>
                     @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
                     @Html.ActionLink("Details", "Details", new { id = item.ID }) |
                     @Html.ActionLink("Delete", "Delete", new { id = item.ID })
                 </td>
             }
-            else
-            {
+                else
+                {
                 <td>
 
                     @Html.ActionLink("Details", "Details", new { id = item.ID })
                 </td>
-
+    
             }
 
-
+                }
         </tr>
     }
 
