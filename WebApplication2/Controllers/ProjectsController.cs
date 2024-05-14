@@ -111,7 +111,24 @@ namespace WebApplication2.Controllers
             }
             return View(project);
         }
+        public ActionResult removeMember(int projectId, string id)
+        {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+            Models.Member member = db.Member.Where(m=>m.UserID==id).First();
+            Models.Project project = db.Project.Find(projectId);
+            project.Members.Remove(member);
+            db.SaveChanges();
+            if (member == null|| project == null)
+            {
+                return HttpNotFound();
+            }
+            return RedirectToAction("Index");
 
+
+        }
         // GET: Projects/Delete/5
         public ActionResult Delete(int? id)
         {
