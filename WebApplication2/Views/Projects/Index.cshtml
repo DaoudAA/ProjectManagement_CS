@@ -1,63 +1,52 @@
 ﻿@model IEnumerable<WebApplication2.Models.Project>
 
 @{
-    ViewBag.Title = "Index";
-    var currentUserName = User.Identity.Name;
-
+    ViewBag.Title = "Vos Projets";
 }
 
-<h2>Index</h2>
+<div class="container">
+    <h2>Projects</h2>
 
-<p>
-    @Html.ActionLink("Create New", "Create")
-</p>
+    <div class="row">
+        <div class="col-md-12">
+            <p>
+                @Html.ActionLink("Create New", "Create", null, new { @class = "btn btn-primary" })
+            </p>
 
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().Code)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().Description)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstOrDefault().StartDate)
-        </th>
-        <th></th>
-    </tr>
-
-    @foreach (var item in Model)
-    {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Code)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-
-            @if (item.Manager != null && item.Manager.Name == currentUserName)
-            {
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }) |
-                    @Html.ActionLink("Details", "Details", new { id = item.ID }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.ID })
-                </td>
-            }
-            else
-            {
-                <td>
-
-                    @Html.ActionLink("Details", "Details", new { id = item.ID })
-                </td>
-
-            }
-
-
-        </tr>
-    }
-
-</table>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th>Start Date</th>
+                        <th>Manager</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@Html.DisplayFor(modelItem => item.Code)</td>
+                            <td>@Html.DisplayFor(modelItem => item.Description)</td>
+                            <td>@Html.DisplayFor(modelItem => item.StartDate)</td>
+                            <td>@(item.Manager != null ? item.Manager.Name : "No Manager")</td>
+                            <td>
+                                @if (item.Manager != null && item.Manager.UserID == ViewBag.UserId)
+                                {
+                                    @Html.ActionLink("Details", "Details", new { id = item.ID }, new { @class = "btn btn-info btn-sm mr-1" })
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.ID }, new { @class = "btn btn-warning btn-sm mr-1" })
+                                    @Html.ActionLink("Project is Completed !", "Delete", new { id = item.ID }, new { @class = "btn btn-danger btn-sm" })
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Details", "Details", new { id = item.ID }, new { @class = "btn btn-info btn-sm" })
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

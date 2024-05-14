@@ -63,6 +63,15 @@ namespace WebApplication2.Controllers
                 var project = db.Project.Find(task.Project.ID);
                 if (project != null)
                 {
+                    if (task.StartDate < project.StartDate)
+                    {
+                        ModelState.AddModelError("StartDate", "Task start date cannot be before project start date.");
+                        // Re-populate the projects dropdown
+                        var projets = db.Project.Select(p => new { p.ID, DisplayText = p.Code + " : " + p.Description }).ToList();
+                        ViewBag.ProjectId = new SelectList(projets, "ID", "DisplayText", task.Project.ID);
+                        return View(task);
+                    }
+
                     task.Project = project;
                     db.Task.Add(task);
                     db.SaveChanges();
@@ -74,7 +83,9 @@ namespace WebApplication2.Controllers
                 }
             }
 
-           
+            // If ModelState is not valid, return the view with the model containing errors
+            var projects = db.Project.Select(p => new { p.ID, DisplayText = p.Code + " : " + p.Description }).ToList();
+            ViewBag.ProjectId = new SelectList(projects, "ID", "DisplayText", task.Project.ID);
             return View(task);
         }
 

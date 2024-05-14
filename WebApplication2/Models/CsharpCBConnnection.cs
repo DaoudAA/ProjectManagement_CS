@@ -10,7 +10,9 @@ namespace WebApplication2.Models
     public class CsharpCBContext : DbContext
     {
         public CsharpCBContext() : base("CsDBConnection")
-        {     
+        {
+            this.Configuration.LazyLoadingEnabled = true;
+
         }
         public DbSet<Project> Project { get; set; }
         public DbSet<Task> Task { get; set; }

@@ -25,8 +25,10 @@ namespace WebApplication2.Controllers
         {
             string userId = User.Identity.GetUserId();
             var projects = db.Project
+                             .Include(p => p.Manager) // Eager load the Manager entity
                              .Where(p => p.Members.Any(m => m.UserID == userId))
                              .ToList();
+            ViewBag.UserId = userId;
 
             return View(projects);
         }
