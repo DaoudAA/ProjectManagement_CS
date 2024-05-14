@@ -38,17 +38,13 @@ namespace WebApplication2.Controllers
                 return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
             }
 
-            // Retrieve the project and its related tasks
             var project = db.Project.Include(p => p.Tasks).SingleOrDefault(p => p.ID == id);
-
             if (project == null)
             {
                 return HttpNotFound();
             }
-
-            // Pass the tasks to the view using ViewBag
+            ViewBag.Db = db;
             ViewBag.Tasks = project.Tasks.ToList();
-
             return View(project);
         }
 

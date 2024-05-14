@@ -63,8 +63,6 @@ namespace WebApplication2.Controllers
                 var project = db.Project.Find(task.Project.ID);
                 if (project != null)
                 {
-                    string userId = User.Identity.GetUserId();
-                    task.UserId = userId;
                     task.Project = project;
                     db.Task.Add(task);
                     db.SaveChanges();
@@ -97,6 +95,7 @@ namespace WebApplication2.Controllers
             return View(task);
         }
 
+
         // POST: Tasks/Edit/5
         // Afin de déjouer les attaques par survalidation, activez les propriétés spécifiques auxquelles vous voulez établir une liaison. Pour 
         // plus de détails, consultez https://go.microsoft.com/fwlink/?LinkId=317598.
@@ -126,7 +125,32 @@ namespace WebApplication2.Controllers
             ViewBag.ProjectId = new SelectList(projects, "ID", "DisplayText", task.Project);
             return View(task);
         }
-        
+
+        [HttpPost]
+        public ActionResult AssignTaskToCurrentUserPost(int id)
+        {
+            string userId = User.Identity.GetUserId();
+            var task = db.Task.Find(id);
+            if (task != null)
+            {
+                task.UserId = userId;
+                db.SaveChanges();
+            }
+            return RedirectToAction("Details", "Projects", new { id = task.Project.ID });
+        }
+
+        [HttpPost]
+        public ActionResult RemoveTaskAssignmentPost(int id)
+        {
+            var task = db.Task.Find(id);
+            if (task != null)
+            {
+                task.UserId = null;
+                db.SaveChanges();
+            }
+            return RedirectToAction("Details", "Projects", new { id = task.Project.ID });
+        }
+
 
         // GET: Tasks/Delete/5
         public ActionResult Delete(int? id)

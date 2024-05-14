@@ -21,33 +21,68 @@
                         </div>
                         <div class="col-md-6">
                             <h4>Tasks</h4>
-                            <table class="table table-striped table-bordered">
-                                <thead>
-                                    <tr>
-                                        <th>Description</th>
-                                        <!-- Add other task properties here -->
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    @foreach (var task in ViewBag.Tasks)
-                                    {
+                            @if (ViewBag.Tasks != null && ViewBag.Tasks.Count > 0)
+                            {
+                                <table class="table table-striped table-bordered">
+                                    <thead>
                                         <tr>
-                                            <td>@task.Description</td>
-                                            <!-- Display other task properties here -->
+                                            <th>Description</th>
+                                            <th>Start Date</th>
+                                            <th>End Date</th>
+                                            <th>User In Charge</th>
+                                            <th></th>
                                         </tr>
-                                    }
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-                <div class="panel-footer">
-                    <div class="row">
-                        <div class="col-md-6">
-                            @Html.ActionLink("Edit", "Edit", new { id = Model.ID }, new { @class = "btn btn-primary" })
-                        </div>
-                        <div class="col-md-6 text-right">
-                            @Html.ActionLink("Back to List", "Index", new { @class = "btn btn-default" })
+                                    </thead>
+                                    <tbody>
+                                        @foreach (var task in ViewBag.Tasks)
+                                        {
+                                            <tr>
+                                                <td>@task.Description</td>
+                                                <td>@task.StartDate.ToString("yyyy-MM-dd")</td>
+                                                <td>@task.EndDate.ToString("yyyy-MM-dd")</td>
+                                                <td>
+                                                    @if (!string.IsNullOrEmpty(task.UserId))
+                                                    {
+                                                        // Retrieve the member associated with the task
+                                                        var member = Model.Members.FirstOrDefault(m => m.UserID == task.UserId);
+
+                                                        if (member != null)
+                                                        {
+                                                            @member.Name
+                                                        }
+                                                    }
+                                                    else
+                                                    {
+                                                        <strong>Unassigned</strong>
+                                                    }
+                                                </td>
+                                                <td>
+                                                    @if (string.IsNullOrEmpty(task.UserId))
+                                                    {
+                                                        Html.BeginForm("AssignTaskToCurrentUserPost", "Tasks", new { id = task.ID }, FormMethod.Post, new { @class = "form-horizontal" });
+                                                        {
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-default">Assign</button>
+                                                        }
+                                                    }
+                                                    else if (Model.Manager.Name == User.Identity.Name)
+                                                    {
+                                                        Html.BeginForm("RemoveTaskAssignmentPost", "Tasks", new { id = task.ID }, FormMethod.Post, new { @class = "form-horizontal" });
+                                                        {
+                                                            @Html.AntiForgeryToken()
+                                                            <button type="submit" class="btn btn-default">Remove Assignment</button>
+                                                        }
+                                                    }
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            }
+                            else
+                            {
+                                <p>No tasks have been created for this project yet.</p>
+                            }
                         </div>
                     </div>
                 </div>
